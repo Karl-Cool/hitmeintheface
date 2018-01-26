@@ -25,7 +25,7 @@ namespace ServerCheckTest
             decimal iteration = 1;
             while (true)
             {
-                checkRemote(iteration);
+                checkLocal(iteration);
                 await Task.Delay(60000);
                 iteration++;
             }
@@ -58,6 +58,9 @@ namespace ServerCheckTest
                 string osStatus = "empty";
                 string osNumberOfProcesses = "empty";
                 string osCap = "empty";
+                string datetimenow = DateTime.Now.ToString();
+                string osFreeMemory = "empty";
+                string osTotalMemory = "empty";
 
                 foreach (var os in mgmtSrchr.Get())
                 {
@@ -65,23 +68,17 @@ namespace ServerCheckTest
                     osStatus = os.GetPropertyValue("Status").ToString();
                     osNumberOfProcesses = os.GetPropertyValue("NumberOfProcesses").ToString();
 
-                    if (!string.IsNullOrEmpty(osCap))
-                    {
-                        Console.WriteLine("Operating System caption: " + osCap);
-                    }
-                    if (!string.IsNullOrEmpty(osStatus))
-                    {
-                        Console.WriteLine("Status: " + osStatus);
-                    }
-                    if (!string.IsNullOrEmpty(osNumberOfProcesses))
-                    {
-                        Console.WriteLine("Number of processes running: " + osNumberOfProcesses);
-                    }
+                    osFreeMemory = os.GetPropertyValue("FreePhysicalMemory").ToString();
+                    osTotalMemory = os.GetPropertyValue("TotalVisibleMemorySize").ToString();
                 }
                 var serverStatus = new JsonStatusObject();
                 serverStatus.nop = osNumberOfProcesses;
                 serverStatus.status = osStatus;
                 serverStatus.caption = osCap;
+                serverStatus.datetime = datetimenow;
+                serverStatus.freememory = osFreeMemory;
+                serverStatus.totalmemory = osTotalMemory;
+
                 string json = JsonConvert.SerializeObject(serverStatus);
                 Console.WriteLine();
                 Console.WriteLine("Uploading Json:");
@@ -121,12 +118,15 @@ namespace ServerCheckTest
             string osNumberOfProcesses = "empty";
             string osCap = "empty";
             string datetimenow = DateTime.Now.ToString();
+            string osFreeMemory = "empty";
+            string osTotalMemory = "empty";
             foreach (var os in mgmtSrchr.Get())
             {
                 osCap = os.GetPropertyValue("Caption").ToString();
                 osStatus = os.GetPropertyValue("Status").ToString();
                 osNumberOfProcesses = os.GetPropertyValue("NumberOfProcesses").ToString();
-
+                osFreeMemory = os.GetPropertyValue("FreePhysicalMemory").ToString();
+                osTotalMemory = os.GetPropertyValue("TotalVisibleMemorySize").ToString();
                 if (!string.IsNullOrEmpty(osCap))
                 {
                     Console.WriteLine("Operating System caption: " + osCap);
@@ -145,6 +145,8 @@ namespace ServerCheckTest
             serverStatus.status = osStatus;
             serverStatus.caption = osCap;
             serverStatus.datetime = datetimenow;
+            serverStatus.freememory = (Convert.ToInt32(osFreeMemory) / 1000).ToString();
+            serverStatus.totalmemory = (Convert.ToInt32(osTotalMemory) / 1000).ToString();
             string json = JsonConvert.SerializeObject(serverStatus);
             Console.WriteLine();
             Console.WriteLine("Uploading Json:");
@@ -182,6 +184,8 @@ namespace ServerCheckTest
             public string nop { get; set; }
             public string caption { get; set; }
             public string datetime { get; set; }
+            public string freememory { get; set; }
+            public string totalmemory { get; set; }
         }
     }
 }
