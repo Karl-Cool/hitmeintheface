@@ -104,7 +104,7 @@ namespace ServerCheckTest
             //skapar queryn (i det här fallet till själva operativsystemet)
             var osQuery = new SelectQuery("Win32_OperatingSystem");
             //Skapar scopet (alltså vilket system som vi vill ansluta till)
-            var machine = @"\\10.1.10.184";
+            var machine = @"\\localhost";
             var path = @"\root\cimv2";
             var mgmtScope = new ManagementScope(machine + path);
 
