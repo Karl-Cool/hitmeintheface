@@ -25,7 +25,7 @@ namespace ServerCheckTest
             decimal iteration = 1;
             while (true)
             {
-                checkLocal(iteration);
+                checkRemote(iteration);
                 await Task.Delay(60000);
                 iteration++;
             }
@@ -39,8 +39,9 @@ namespace ServerCheckTest
                 ConnectionOptions options = new ConnectionOptions();
                 options.Username = "QuiZzYy";
                 options.Password = "karl123";
+                options.EnablePrivileges = true;
                 options.Impersonation = ImpersonationLevel.Impersonate;
-                options.Authentication = AuthenticationLevel.Default;
+                options.Authentication = AuthenticationLevel.PacketPrivacy;
                 options.EnablePrivileges = true;
                 Console.WriteLine("Status iteration [" + Convert.ToString(iteration) + "] started at: " + DateTime.Now.ToString());
                 //skapar queryn (i det här fallet till själva operativsystemet)
